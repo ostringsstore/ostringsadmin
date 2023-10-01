@@ -1,0 +1,47 @@
+﻿@page "/Entradas"
+
+<PageTitle>Entradas</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <h1>Entradas</h1>
+
+        @if (entries == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else if (hasError)
+        {
+            <p><em>Error: @errorMessage</em></p>
+        }
+        else
+        {
+            <button class="btn-primary m-2" @onclick="CreateEntry">Crear Entrada</button>
+            <table class="table table-striped table-hover table-responsive ">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th>Id</th>
+                        <th>Fecha</th>
+                        <th>Referencia</th>
+                        <th>Cantidad</th>
+                        <th>Costo</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody class="table-primary table-bordered">
+                    @foreach (var entry in entries)
+                    {
+                        <tr>
+                            <td>@entry.InventoryEntry.Id</td>
+                            <td>@entry.InventoryEntry.CreateAt.ToShortDateString()</td>
+                            <td>@entry.Product.Reference</td>
+                            <td>@entry.Quantity</td>
+                            <td>@entry.UnitPrice</td>
+                            <td>@(entry.UnitPrice * entry.Quantity)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </Authorized>
+</AuthorizeView>
