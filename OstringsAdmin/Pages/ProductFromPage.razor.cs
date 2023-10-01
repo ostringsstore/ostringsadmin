@@ -23,10 +23,7 @@ namespace OstringsAdmin.Pages
 
         protected async override Task OnInitializedAsync()
         {
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var isUserAuthenticated = authState.User.Identity?.IsAuthenticated;
-
-            if (isUserAuthenticated.HasValue && isUserAuthenticated.Value)
+            if (await ValidateAuth())
             {
                 var response = await CateogriesService.GetCategories();
 
@@ -48,10 +45,7 @@ namespace OstringsAdmin.Pages
 
         private async void Confirm()
         {
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var isUserAuthenticated = authState.User.Identity?.IsAuthenticated;
-
-            if (isUserAuthenticated.HasValue && isUserAuthenticated.Value)
+            if (await ValidateAuth()) 
             {
                 var response = await ProductsService.CreateProduct(productRequest);
 
@@ -70,5 +64,13 @@ namespace OstringsAdmin.Pages
                 NavigationManager.NavigateTo("/Identity/Account/Login");
             }
         }
-    }
+
+		private async Task<bool> ValidateAuth()
+		{
+			var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+			var isUserAuthenticated = authState.User.Identity?.IsAuthenticated;
+
+			return isUserAuthenticated.HasValue && isUserAuthenticated.Value;
+		}
+	}
 }

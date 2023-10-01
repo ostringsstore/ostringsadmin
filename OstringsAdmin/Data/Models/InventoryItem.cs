@@ -17,5 +17,6 @@ namespace OstringsAdmin.Data.Models
         public int PayedQuantity { get; set; }
         public int OutstandingQuantity { get; set; }
         public double UnitPrice { get; set; }
+        public string Details { get; set; }
     }
 }

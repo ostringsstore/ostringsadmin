@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Ostrings.Data.Context;
 
@@ -11,9 +12,10 @@ using Ostrings.Data.Context;
 namespace OstringsAdmin.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230530231345_AddIsCreditInEntry")]
+    partial class AddIsCreditInEntry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -369,20 +371,6 @@ namespace OstringsAdmin.Migrations
 
             modelBuilder.Entity("OstringsAdmin.Data.Models.OrderItem", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreateAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Detail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
@@ -398,9 +386,7 @@ namespace OstringsAdmin.Migrations
                     b.Property<DateTime>("UpdateAt")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
+                    b.HasKey("OrderId", "ProductId");
 
                     b.HasIndex("ProductId");
 
@@ -433,8 +419,7 @@ namespace OstringsAdmin.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderId")
-                        .IsUnique();
+                    b.HasIndex("OrderId");
 
                     b.ToTable("Payments");
                 });
@@ -892,8 +877,8 @@ namespace OstringsAdmin.Migrations
             modelBuilder.Entity("OstringsAdmin.Data.Models.Payment", b =>
                 {
                     b.HasOne("OstringsAdmin.Data.Models.Order", "Order")
-                        .WithOne("Payment")
-                        .HasForeignKey("OstringsAdmin.Data.Models.Payment", "OrderId")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -986,9 +971,6 @@ namespace OstringsAdmin.Migrations
             modelBuilder.Entity("OstringsAdmin.Data.Models.Order", b =>
                 {
                     b.Navigation("CartIiems");
-
-                    b.Navigation("Payment")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("OstringsAdmin.Data.Models.Product", b =>

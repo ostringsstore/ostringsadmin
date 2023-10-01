@@ -17,5 +17,7 @@ namespace OstringsAdmin.Data.Models
         [ForeignKey("Address")]
         public Guid? AddressId { get; set; }
         public Address Address { get; set; }
+
+        public Payment Payment { get; set; }
     }
 }

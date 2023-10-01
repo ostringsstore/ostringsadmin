@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Ostrings.Data.Context;
-using OstringsAdmin.Contracts;
 using OstringsAdmin.Contracts.Repositories;
 using OstringsAdmin.Data.Models;
 
 namespace OstringsAdmin.Repository
 {
-	public class ProvidersRepository : IProvidersRepository
+    public class ProvidersRepository : IProvidersRepository
 	{
 		private readonly IDbContextFactory<ApplicationDbContext> dbFactory;
 

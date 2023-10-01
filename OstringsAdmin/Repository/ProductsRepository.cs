@@ -5,36 +5,40 @@ using OstringsAdmin.Data.Models;
 
 namespace OstringsAdmin.Repository
 {
-    public class ProductsRepository : IProductsRepository
-    {
-        private readonly IDbContextFactory<ApplicationDbContext> dbFactory;
+	public class ProductsRepository : IProductsRepository
+	{
+		private readonly IDbContextFactory<ApplicationDbContext> dbFactory;
 
-        public ProductsRepository(IDbContextFactory<ApplicationDbContext> dbFactory)
-        {
-            this.dbFactory = dbFactory;
-        }
+		public ProductsRepository(IDbContextFactory<ApplicationDbContext> dbFactory)
+		{
+			this.dbFactory = dbFactory;
+		}
 
-        public async Task<List<Product>> GetProducts()
-        {
-            using var context = dbFactory.CreateDbContext();
+		public async Task<List<Product>> GetProducts(IEnumerable<Guid>? products = null)
+		{
+			using var context = dbFactory.CreateDbContext();
+			var query = context.Products.Include(pd => pd.Category).AsQueryable();
 
-            return await context.Products.Include(pd => pd.Category).ToListAsync();
-        }
+			if (products != null && products.Any())
+				query = query.Where(p => products.Contains(p.Id));
 
-        public async Task<Product> GetProduct(Guid productId)
-        {
-            using var context = dbFactory.CreateDbContext();
+			return await query.ToListAsync();
+		}
 
-            return await context.Products.Include(pd => pd.Category).Include(pd => pd.ProductLocations).ThenInclude(l => l.Location).FirstOrDefaultAsync(pd => pd.Id == productId);
-        }
+		public async Task<Product> GetProduct(Guid productId)
+		{
+			using var context = dbFactory.CreateDbContext();
 
-        public async Task CreateProduct(Product product)
-        {
-            using var context = dbFactory.CreateDbContext();
+			return await context.Products.Include(pd => pd.Category).Include(pd => pd.ProductLocations).ThenInclude(l => l.Location).FirstOrDefaultAsync(pd => pd.Id == productId);
+		}
 
-            await context.Products.AddAsync(product);
+		public async Task CreateProduct(Product product)
+		{
+			using var context = dbFactory.CreateDbContext();
 
-            await context.SaveChangesAsync();
-        }
-    }
+			await context.Products.AddAsync(product);
+
+			await context.SaveChangesAsync();
+		}
+	}
 }

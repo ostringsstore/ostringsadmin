@@ -3,52 +3,85 @@
 <PageTitle>Crear entrada</PageTitle>
 
 <AuthorizeView>
-    <Authorized>
-        <h1>Entrada</h1>
+	<Authorized>
+		<h1 class="text-primary">Entrada</h1>
 
-        @if (providers == null)
-        {
-            <p><em>Loading...</em></p>
-        }
-        else if (hasError)
-        {
-            <p><em>Error: @errorMessage</em></p>
-        }
-        else
-        {
-            <select class="form-control m-2" @bind="selectedProvider">
-                @foreach (var provider in providers)
-                {
-                    <option value="@provider.Id">@provider.Name</option>
-                }
-            </select>
+		@if (providers == null)
+		{
+			<p><em>Loading...</em></p>
+		}
+		else if (hasError)
+		{
+			<p><em>Error: @errorMessage</em></p>
+		}
+		else
+		{
+			<div class="d-flex justify-content-center">
+				<div class="flex-fill m-2">
+					<label for="provider" class=" col-form-label">Proveedor</label>
+					<select id="provider" class="form-control form-select" @bind="selectedProvider">
+						@foreach (var provider in providers)
+						{
+							<option calss="form-control" value="@provider.Id">@provider.Name</option>
+						}
+					</select>
+					@if (!isValidProvider)
+					{
+						<label class="text-danger col-form-label">Debe seleccionar el proveedor</label>
+					}
+				</div>
+				<div class="flex-fill m-2">
+					<label for="credit" class=" col-form-label">Credito</label>
+					<select id="credit" class="form-control form-select" @bind="isCredit">
+						<option value="0">Contado</option>
+						<option value="1">Credito</option>
+					</select>
+				</div>
+			</div>
+			<div class="border-top bg-secondary border-2 m-2"></div>
+			@if (isFormVisible)
+			{
+				<EntryItemForm Item="inventoryItem" OnCancel="CloseForm" OnSave="AddItem" Products="products" />
+			}
+			else
+			{
+				<button class="btn btn-primary m-2" @onclick="NewItem">Agregar Item</button>
+				<table class="table table-striped table-hover table-responsive">
+					<thead class="bg-primary text-white">
+						<tr>
+							<th>Referencia</th>
+							<th>Detalle</th>
+							<th>Cantidad</th>
+							<th>Costo</th>
+							<th>Total</th>
+						</tr>
+					</thead>
+					<tbody class="table-primary table-bordered">
+						@foreach (var item in inventoryItems)
+						{
+							<tr>
+								<td>@item.Product.Reference</td>
+								<td>@item.Details</td>
+								<td>@item.Quantity</td>
+								<td>@item.Product.DistributionPrice</td>
+								<td>@(item.Product.DistributionPrice * item.Quantity)</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+				@if (!isAnyItem)
+				{
+					<label class="text-danger col-form-label">Debe agregar algún item</label>
+				}
+			}
 
-            <button class="btn-primary m-2" @onclick="AddEntryItem">Agregar Item</button>
-            <table class="table table-striped table-hover table-responsive ">
-                <thead class="bg-primary text-white">
-                    <tr>
-                        <th>Id</th>
-                        <th>Fecha</th>
-                        <th>Referencia</th>
-                        <th>Cantidad</th>
-                        <th>Costo</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody class="table-primary table-bordered">
-                    @foreach (var entry in entries)
-                    {
-                        <tr>
-                            <td>@entry.InventoryEntry.Id</td>
-                            <td>@entry.InventoryEntry.CreateAt.ToShortDateString()</td>
-                            <td>@entry.Product.Reference</td>
-                            <td>@entry.Quantity</td>
-                            <td>@entry.UnitPrice</td>
-                            <td>@(entry.UnitPrice * entry.Quantity)</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-    </Authorized>
+			@if (!isFormVisible)
+			{
+				<div class="d-flex justify-content-center">
+					<button type="submit" class="btn btn-primary m-2" @onclick="Confirm">Confirmar</button>
+					<button type="button" class="btn btn-secondary m-2" @onclick="Cancel">Cancelar</button>
+				</div>
+			}
+		}
+	</Authorized>
 </AuthorizeView>

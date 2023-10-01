@@ -1,12 +1,12 @@
-﻿@page "/Entradas"
+﻿@page "/Salidas"
 
-<PageTitle>Entradas</PageTitle>
+<PageTitle>Salidas</PageTitle>
 
 <AuthorizeView>
 	<Authorized>
-		<h1 class="text-primary">Entradas</h1>
+		<h1 class="text-primary">Salidas</h1>
 
-		@if (entries == null)
+		@if (filteredOrders == null)
 		{
 			<p><em>Loading...</em></p>
 		}
@@ -16,7 +16,7 @@
 		}
 		else
 		{
-			<button class="btn-primary m-2" @onclick="CreateEntry">Crear Entrada</button>
+			<button class="btn-primary m-2" @onclick="CreateOrder">Crear Orden</button>
 			<table class="table table-striped table-hover table-responsive ">
 				<thead class="bg-primary text-white">
 					<tr>
@@ -32,21 +32,25 @@
 							}
 						</th>
 						<th>Referencia</th>
+						<th>Cliente</th>
+						<th>Detalle</th>
 						<th>Cantidad</th>
 						<th>Costo</th>
 						<th>Total</th>
 					</tr>
 				</thead>
 				<tbody class="table-primary table-bordered" @onclick="TableClicked">
-					@foreach (var entry in filteredEntries)
+					@foreach (var orderItem in filteredOrders)
 					{
 						<tr>
-							<td>@entry.InventoryEntry.Id</td>
-							<td>@entry.InventoryEntry.CreateAt.ToShortDateString()</td>
-							<td>@entry.Product.Name</td>
-							<td>@entry.Quantity</td>
-							<td>@entry.UnitPrice</td>
-							<td>@(entry.UnitPrice * entry.Quantity)</td>
+							<td>@orderItem.Order.Id</td>
+							<td>@orderItem.Order.CreateAt</td>
+							<td>@orderItem.Product.Name</td>
+							<td>@($"{orderItem.Order.User.Name} {orderItem.Order.User.LastName}")</td>
+							<td>@orderItem.Detail</td>
+							<td>@orderItem.Quantity</td>
+							<td>@orderItem.UnitPrice</td>
+							<td>@orderItem.TotalPrice</td>
 						</tr>
 					}
 				</tbody>

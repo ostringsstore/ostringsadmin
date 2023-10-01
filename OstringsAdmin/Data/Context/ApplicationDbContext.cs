@@ -21,18 +21,6 @@ namespace Ostrings.Data.Context
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<OrderItem>().HasKey(g => new { g.OrderId, g.ProductId });
-
-            builder.Entity<OrderItem>()
-                .HasOne(g => g.Order)
-                .WithMany(g => g.CartIiems)
-                .HasForeignKey(d => d.OrderId);
-
-            builder.Entity<OrderItem>()
-                .HasOne(g => g.Product)
-                .WithMany(g => g.CartIiems)
-                .HasForeignKey(g => g.ProductId);
-
             builder.Entity<ProductLocation>().HasKey(g => new { g.LocationId, g.ProductId });
 
             builder.Entity<ProductLocation>()

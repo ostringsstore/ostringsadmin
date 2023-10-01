@@ -10,7 +10,7 @@ namespace Ostrings.Data.Models
         public string PhoneNumber { get; set; }
         public string ContactPerson { get; set; }
 
-        [ForeignKey("Category")]
+        [ForeignKey("User")]
         public Guid UserId { get; set; }
         public User User { get; set; }
     }

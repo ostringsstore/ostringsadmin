@@ -9,6 +9,8 @@ namespace OstringsAdmin.Data.Models
         public Guid ProviderId { get; set; }
         public Provider Provider { get; set; }
         public double TotalAmount { get; set; }
+        public bool IsCredit { get; set; }
+        public List<InventoryItem> InventoryItems { get; set; }
 
         public List<ProviderPayment> ProviderPayments { get; set; }
     }

@@ -7,5 +7,7 @@ namespace OstringsAdmin.Dto.Requests
         private const string obligatoryField = "Campo obligatorio";
         [Required(ErrorMessage = obligatoryField)]
         public Guid? ProviderId { get; set; }
+        public bool IsCredit { get; set; }
+        public List<InventoryItemRequest> Items { get; set; }
     }
 }

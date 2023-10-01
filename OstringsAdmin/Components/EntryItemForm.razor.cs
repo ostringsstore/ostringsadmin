@@ -1,60 +1,78 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using OstringsAdmin.Dto.Requests;
-using OstringsAdmin.Services;
+using OstringsAdmin.Dto;
+using System.Xml.Linq;
 
 namespace OstringsAdmin.Components
 {
-    public partial class EntryItemForm
-    {
-        protected async override Task OnInitializedAsync()
-        {
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var isUserAuthenticated = authState.User.Identity?.IsAuthenticated;
+	public partial class EntryItemForm
+	{
+		private List<ProductRequest> filteredProducts = new List<ProductRequest>();
+		private bool isProductsVisible = false;
 
-            if (isUserAuthenticated.HasValue && isUserAuthenticated.Value)
-            {
-                var response = await CateogriesService.GetCategories();
+		private string searchText;
 
-                if (response.IsSucces)
-                {
-                    categories = response.Data;
-                }
-                else
-                {
-                    hasError = true;
-                    errorMessage = response.CustomErrors?.FirstOrDefault()?.Description;
-                }
-            }
-            else
-            {
-                NavigationManager.NavigateTo("/Identity/Account/Login");
-            }
-        }
 
-        private async void Confirm()
-        {
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var isUserAuthenticated = authState.User.Identity?.IsAuthenticated;
+		[Parameter] public InventoryItemRequest Item { get; set; }
+		[Parameter] public List<Product> Products { get; set; }
 
-            if (isUserAuthenticated.HasValue && isUserAuthenticated.Value)
-            {
-                var response = await ProductsService.CreateProduct(productRequest);
+		[Parameter] public EventCallback OnSave { get; set; }
 
-                if (response.IsSucces)
-                {
-                    NavigationManager.NavigateTo("/Productos");
-                }
-                else
-                {
-                    hasError = true;
-                    errorMessage = response.CustomErrors?.FirstOrDefault()?.Description;
-                }
-            }
-            else
-            {
-                NavigationManager.NavigateTo("/Identity/Account/Login");
-            }
-        }
-    }
+		[Parameter] public EventCallback OnCancel { get; set; }
+
+		protected override void OnInitialized()
+		{
+			Item.Product = new ProductRequest();
+			filteredProducts = Products.Select(p => MapProductRequest(p)).ToList();
+			base.OnInitialized();
+		}
+
+		private ProductRequest MapProductRequest(Product p)
+		{
+			return new ProductRequest()
+			{
+				Name = p.Name,
+				Reference = p.Reference,
+				Id = p.Id,
+				DistributionPrice = p.DistributionPrice,
+			};
+		}
+
+		private void SelectProduct(ProductRequest product)
+		{
+			searchText = product.Name;
+			isProductsVisible = false;
+			Item.ProductId = product.Id;
+			Item.Product = product;
+		}
+
+		private void FilterProducts(ChangeEventArgs e)
+		{
+			isProductsVisible = true;
+			
+			if (e == null || e.Value == null || string.IsNullOrEmpty(e.Value.ToString()))
+			{
+				filteredProducts = Products.Select(p => MapProductRequest(p)).ToList();
+			}
+			else
+			{
+				filteredProducts = Products.Where(p => p.Reference.ToUpper().Contains(e.Value.ToString().ToUpper()) || p.Name.ToUpper().Contains(e.Value.ToString().ToUpper())).Select(p => MapProductRequest(p)).ToList();
+			}
+		}
+
+		private void FocusSerarch(EventArgs e)
+		{
+			isProductsVisible = true;
+		}
+
+		private async Task HandleValidSubmit()
+		{
+			await OnSave.InvokeAsync();
+		}
+
+		private async Task HandleReset()
+		{
+			await OnCancel.InvokeAsync();
+		}
+	}
 }

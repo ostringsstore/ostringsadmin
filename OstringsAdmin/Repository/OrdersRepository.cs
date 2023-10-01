@@ -5,27 +5,27 @@ using OstringsAdmin.Data.Models;
 
 namespace OstringsAdmin.Repository
 {
-	public class EntriesRepository : IEntriesRepository
+	public class OrdersRepository : IOrdersRepository
 	{
 		private readonly IDbContextFactory<ApplicationDbContext> dbFactory;
 
-		public EntriesRepository(IDbContextFactory<ApplicationDbContext> dbFactory)
+		public OrdersRepository(IDbContextFactory<ApplicationDbContext> dbFactory)
 		{
 			this.dbFactory = dbFactory;
 		}
 
-		public async Task<List<InventoryItem>> GetEntries()
+		public async Task<List<OrderItem>> GetOrders()
 		{
 			using var context = dbFactory.CreateDbContext();
 
-			return await context.InventoryItems.Include(i => i.Product).Include(i => i.InventoryEntry.Provider).ToListAsync();
+			return await context.OrderItems.Include(i => i.Product).Include(i => i.Order.Payment).ToListAsync();
 		}
 
-		public async Task SaveEntry(InventoryEntry inventoryEntry)
+		public async Task SaveEntry(Order order)
 		{
 			using var context = dbFactory.CreateDbContext();
 
-			await context.InventoryEntries.AddAsync(inventoryEntry);
+			await context.Orders.AddAsync(order);
 
 			await context.SaveChangesAsync();
 		}

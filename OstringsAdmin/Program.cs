@@ -6,7 +6,6 @@ using OstringsAdmin.Data;
 using OstringsAdmin.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using OstringsAdmin.Repository;
-using OstringsAdmin.Contracts;
 using OstringsAdmin.Services;
 using OstringsAdmin.Contracts.Repositories;
 
@@ -47,12 +46,14 @@ builder.Services.AddTransient<IProductsRepository, ProductsRepository>();
 builder.Services.AddTransient<ICateogriesRepository, CateogriesRepository>();
 builder.Services.AddTransient<IProvidersRepository, ProvidersRepository>();
 builder.Services.AddTransient<IEntriesRepository, EntriesRepository>();
+builder.Services.AddTransient<IOrdersRepository, OrdersRepository>();
 
 //Services
 builder.Services.AddTransient<UsersService>();
 builder.Services.AddTransient<ProductsService>();
 builder.Services.AddTransient<CateogriesService>();
 builder.Services.AddTransient<EntriesService>();
+builder.Services.AddTransient<OrdersService>();
 
 var app = builder.Build();
 

@@ -3,6 +3,8 @@ namespace OstringsAdmin.Dto.Requests
 {
     public class ProductRequest
     {
+        public Guid Id { get; set; }
+
         private const string obligatoryField = "Campo obligatorio";
 
         [Required(ErrorMessage = obligatoryField)] 
@@ -28,5 +30,10 @@ namespace OstringsAdmin.Dto.Requests
 
         [Required(ErrorMessage = obligatoryField)]
         public Guid? CateogryId { get; set; }
+
+        public ProductRequest Clone()
+        {
+            return (ProductRequest)MemberwiseClone();
+        }
     }
 }

@@ -5,10 +5,10 @@ using OstringsAdmin.Dto;
 
 namespace OstringsAdmin.Pages
 {
-	public partial class EntriesPage
+	public partial class SalesPage
 	{
-		private List<InventoryItem> entries;
-		private List<InventoryItem> filteredEntries;
+		private List<OrderItem> orders;
+		private List<OrderItem> filteredOrders;
 		private bool hasError;
 		private bool isDateFilterVisible = false;
 		private string? errorMessage;
@@ -17,7 +17,7 @@ namespace OstringsAdmin.Pages
 
 		[Inject] public NavigationManager NavigationManager { get; set; }
 
-		[Inject] public EntriesService EntriesService { get; set; }
+		[Inject] public OrdersService OrdersService { get; set; }
 
 		protected async override Task OnInitializedAsync()
 		{
@@ -26,12 +26,12 @@ namespace OstringsAdmin.Pages
 
 			if (isUserAuthenticated.HasValue && isUserAuthenticated.Value)
 			{
-				var response = await EntriesService.GetEntries();
+				var response = await OrdersService.GetOrders();
 
 				if (response.IsSucces)
 				{
-					entries = response.Data;
-					filteredEntries = entries;
+					orders = response.Data;
+					filteredOrders = orders;
 				}
 				else
 				{
@@ -50,7 +50,7 @@ namespace OstringsAdmin.Pages
 			isDateFilterVisible = false;
 			if (DateTime.TryParse(e.Value?.ToString(), out DateTime date))
 			{
-				filteredEntries = entries.Where(e=>e.CreateAt.Date ==  date.Date).ToList();
+				filteredOrders = orders.Where(e => e.CreateAt.Date == date.Date).ToList();
 			}
 		}
 
@@ -62,7 +62,7 @@ namespace OstringsAdmin.Pages
 		private void ResetFilters()
 		{
 			isDateFilterVisible = false;
-			filteredEntries = entries;
+			filteredOrders = orders;
 		}
 
 		private void TableClicked()
@@ -70,9 +70,9 @@ namespace OstringsAdmin.Pages
 			isDateFilterVisible = false;
 		}
 
-		private void CreateEntry()
+		private void CreateOrder()
 		{
-			NavigationManager.NavigateTo("/Crear-Entrada");
+			NavigationManager.NavigateTo("/Crear-Orden");
 		}
 	}
 }

@@ -88,5 +88,5 @@ namespace OstringsAdmin.Services
 				return GetServerErrorResponse(ex);
 			}
 		}
-	}
+    }
 }
